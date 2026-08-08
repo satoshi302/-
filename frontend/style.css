@@ -1,0 +1,122 @@
+:root {
+  --bg: #f5f7fa;
+  --card-bg: #ffffff;
+  --text: #1f2933;
+  --muted: #64748b;
+  --accent: #2563eb;
+  --accent-dark: #1d4ed8;
+  --border: #e2e8f0;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  padding: 0 0 3rem;
+}
+
+header {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: white;
+  padding: 2rem 1.5rem;
+}
+
+header h1 { margin: 0 0 0.3rem; font-size: 1.5rem; }
+header .sub { margin: 0; opacity: 0.9; font-size: 0.95rem; }
+
+main {
+  max-width: 900px;
+  margin: 1.5rem auto;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+}
+
+.card h2 { margin-top: 0; font-size: 1.1rem; }
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.form-row.two-col {
+  align-items: flex-start;
+}
+
+input, select, button {
+  font-size: 0.9rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+input, select { flex: 1 1 150px; }
+
+fieldset {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 1 1 260px;
+}
+
+legend { font-size: 0.8rem; color: var(--muted); padding: 0 0.3rem; }
+
+button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+button:hover { background: var(--accent-dark); }
+
+.hint {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+}
+
+th, td {
+  border-bottom: 1px solid var(--border);
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.status {
+  font-size: 0.85rem;
+  color: var(--accent-dark);
+  min-height: 1.2em;
+}
+
+.chart-box {
+  margin-top: 1.5rem;
+}
+
+.chart-box h3 {
+  font-size: 0.95rem;
+  color: var(--muted);
+}
