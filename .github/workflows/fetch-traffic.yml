@@ -1,16 +1,16 @@
-name: Fetch JARTIC traffic data
+name: Fetch JARTIC traffic data (daily)
 
 on:
   schedule:
-    - cron: "0 */3 * * *"
+    - cron: "0 21 * * *" # 毎日 06:00 JST
   workflow_dispatch: {}
-
-permissions:
-  contents: write
 
 jobs:
   fetch:
     runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -19,15 +19,8 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install -r backend/requirements.txt
+        run: pip install -r scripts/requirements.txt
 
-      - name: Fetch traffic data
-        run: python backend/scripts/fetch_all.py
-
-      - name: Commit updated database
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add backend/data/traffic.db
-          git diff --cached --quiet || git commit -m "chore: 交通量データ自動取得 $(date -u +'%Y-%m-%d %H:%M UTC')"
-          git push
+      - name: Fetch traffic data into Supabase
+        working-directory: scripts
+        run: python fetch_daily.py

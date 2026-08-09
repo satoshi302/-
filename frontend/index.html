@@ -6,54 +6,17 @@
 <title>引越し渋滞情報 比較ツール</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 <header>
   <h1>引越し渋滞情報 比較ツール</h1>
-  <p class="sub">地点を登録して、8月・9月の過去の渋滞状況とこれからの状況を比較できます。</p>
+  <p class="sub">登録済みの地点について、過去の渋滞状況とこれからの状況を比較できます。</p>
 </header>
 
 <main>
   <section class="card">
-    <h2>1. 地点を登録</h2>
-    <form id="point-form" class="form-row">
-      <input type="text" id="p-name" placeholder="地点名 (例: 現在の家、新居、通勤ルート途中)" required>
-      <input type="number" step="0.000001" id="p-lat" placeholder="緯度 (例: 35.6812)" required>
-      <input type="number" step="0.000001" id="p-lng" placeholder="経度 (例: 139.7671)" required>
-      <input type="number" id="p-radius" placeholder="範囲(m)" value="500" min="50" max="5000">
-      <input type="text" id="p-memo" placeholder="メモ(任意)">
-      <button type="submit">登録</button>
-    </form>
-    <p class="hint">緯度経度はGoogleマップで地点を右クリック→座標をコピーで取得できます。</p>
-    <table id="points-table">
-      <thead>
-        <tr><th>地点名</th><th>緯度</th><th>経度</th><th>範囲</th><th>操作</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </section>
-
-  <section class="card">
-    <h2>2. データ収集</h2>
-    <div class="form-row">
-      <select id="fetch-point-select"></select>
-      <button id="fetch-live-btn">今のデータを取得 (JARTIC API)</button>
-    </div>
-    <div class="form-row">
-      <input type="file" id="archive-file" accept=".csv">
-      <button id="import-archive-btn">過去データ(CSV)を取込む</button>
-    </div>
-    <p class="hint">
-      JARTICは直近約1か月分のデータしか公開しないため、「今のデータを取得」を定期的に実行して
-      蓄積する必要があります(GitHub Actionsで自動化可能。README参照)。<br>
-      過去分は <a href="https://www.compusophia.com/en/notes/1" target="_blank" rel="noopener">Compusophiaのアーカイブ</a>
-      からダウンロードしたCSVをここで取り込んでください。
-    </p>
-    <p id="fetch-status" class="status"></p>
-  </section>
-
-  <section class="card">
-    <h2>3. 比較する</h2>
+    <h2>地点を選んで比較する</h2>
     <div class="form-row">
       <select id="compare-point-select"></select>
     </div>
@@ -83,8 +46,18 @@
       <canvas id="daily-chart"></canvas>
     </div>
   </section>
+
+  <section class="card">
+    <h2>このダッシュボードについて</h2>
+    <p class="hint">
+      地点の登録や過去データ(<a href="https://www.compusophia.com/en/notes/1" target="_blank" rel="noopener">Compusophia</a>アーカイブ)の取込は管理者が行っています。
+      新しい地点の追加や過去データの取込をご希望の場合は管理者にご連絡ください。<br>
+      交通量データは <a href="https://www.jartic-open-traffic.org/" target="_blank" rel="noopener">JARTIC 交通量オープンデータ</a> を毎日自動取得して蓄積しています。
+    </p>
+  </section>
 </main>
 
+<script src="config.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

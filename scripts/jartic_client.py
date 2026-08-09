@@ -3,18 +3,17 @@
 エンドポイント: https://api.jartic-open-traffic.org/geoserver
 WFS 2.0.0 GetFeature 形式, typeNames=t_travospublic_measure_5m (5分毎断面交通量).
 
-注意: このAPIはJARTICが「直近約1か月分」のみを公開し、月次で古いデータを消去するため、
-このアプリでは定期的にこのクライアントでライブ取得したデータをDBに蓄積していくことで
-時系列データを育てていく想定。過去分(消去済み)は Compusophia のアーカイブCSVを
-importer.py で取り込んで補う。
+JARTICは「直近約1か月分」のみを公開し月次で古いデータを消去するため、このスクリプトを
+定期実行(GitHub Actions等)してSupabaseへ蓄積していくことで時系列データを育てる想定。
 
 フィールド名(道路種別/時間コード/上り下り交通量など)は公開仕様書の表記ゆれがあるため、
-本クライアントは既知の候補キーを複数試しつつ、生のpropertiesも常にraw_jsonとして
-保存する。実データで名称が違えば CANDIDATE_KEYS を調整すること。
+既知の候補キーを複数試しつつ、生のpropertiesも常にraw_jsonとして保存する。実データで
+名称が違えば CANDIDATE_KEYS を調整すること。
 """
 from __future__ import annotations
 
 import json
+import math
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -22,9 +21,6 @@ import requests
 
 ENDPOINT = "https://api.jartic-open-traffic.org/geoserver"
 TYPE_NAME = "t_travospublic_measure_5m"
-
-# 緯度1度 ≈ 111km, 経度1度 ≈ 111km * cos(lat) (日本付近では概算で使う)
-import math
 
 CANDIDATE_TIME_KEYS = ["時間コード", "observationTime", "OBS_TIME", "time_code"]
 CANDIDATE_ROAD_TYPE_KEYS = ["道路種別", "road_type", "ROAD_TYPE"]
@@ -49,10 +45,10 @@ def fetch_traffic_volume(
     lat: float,
     lng: float,
     radius_m: int = 500,
-    minutes_back: int = 60,
+    minutes_back: int = 1440,
     timeout: int = 30,
 ) -> list[dict[str, Any]]:
-    """指定地点周辺の直近 minutes_back 分の断面交通量データを取得する."""
+    """指定地点周辺の直近 minutes_back 分の断面交通量データを取得する(既定: 24時間分)."""
     min_x, min_y, max_x, max_y = bbox_from_point(lat, lng, radius_m)
 
     now = datetime.utcnow() + timedelta(hours=9)  # JST概算
@@ -106,7 +102,6 @@ def _extract_first_coord(geom: dict[str, Any]) -> tuple[float, float] | None:
     coords = geom.get("coordinates")
     if not coords:
         return None
-    # MultiPoint: [[lng, lat], ...] / Point: [lng, lat]
     if isinstance(coords[0], (list, tuple)):
         return tuple(coords[0])  # type: ignore[return-value]
     return tuple(coords)  # type: ignore[return-value]

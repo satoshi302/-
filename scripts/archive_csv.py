@@ -1,8 +1,4 @@
-"""Compusophia等が配布するJARTIC形式の過去データ(CSV)を取り込むインポーター.
-
-Compusophia (https://www.compusophia.com/en/notes/1) はJARTICが毎月消してしまう
-断面交通量オープンデータをアーカイブして配布しているノート。ダウンロードした
-CSVをこのモジュールでDBに取り込み、過去の8月/9月データとして比較に使う。
+"""Compusophia等が配布するJARTIC形式の過去データ(CSV)をパースするユーティリティ.
 
 CSVの列名はJARTIC生データに準じる想定(時間コード/道路種別/上り交通量/下り交通量 等)。
 実際にダウンロードしたファイルの列名が異なる場合は COLUMN_ALIASES を調整すること。
@@ -26,10 +22,7 @@ COLUMN_ALIASES = {
 
 
 def _resolve_columns(fieldnames: list[str]) -> dict[str, str | None]:
-    resolved: dict[str, str | None] = {}
-    for key, aliases in COLUMN_ALIASES.items():
-        resolved[key] = next((a for a in aliases if a in fieldnames), None)
-    return resolved
+    return {key: next((a for a in aliases if a in fieldnames), None) for key, aliases in COLUMN_ALIASES.items()}
 
 
 def _parse_time(raw: str) -> str:
